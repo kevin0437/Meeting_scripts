@@ -2,3 +2,4 @@ streamlit
 openai-whisper
 torch
 streamlit-audiorecorder
+transformers
