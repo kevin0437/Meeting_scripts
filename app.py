@@ -16,7 +16,7 @@ import torch
 
 st.set_page_config(page_title="Meeting Transcriber", layout="centered")
 st.title("🎙️ Meeting Transcriber & Summarizer")
-st.write("Upload or record meeting audio, get a transcript via Whisper, then a summary via BART-CNN.")
+st.write("Upload or record meeting audio, get a transcript, then a summary.")
 
 # 1) Whisper model (cached so it only loads once)
 @st.cache_resource
@@ -28,8 +28,8 @@ whisper_model = load_whisper()
 # 2) Summarization model + tokenizer (also cached)
 @st.cache_resource
 def load_summarizer():
-    tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
-    model     = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
+    tokenizer = AutoTokenizer.from_pretrained("Shaelois/MeetingScript")
+    model = AutoModelForSeq2SeqLM.from_pretrained("Shaelois/MeetingScript")
     return tokenizer, model
 
 summ_tokenizer, summ_model = load_summarizer()
@@ -41,8 +41,8 @@ def sliding_window_summarize(
     text: str,
     tokenizer,
     model,
-    window_size: int = 1024,
-    stride: int = 256,
+    window_size: int = 4096,
+    stride: int = 1024,
     chunk_summary_max_length: int = 1000,
     final_summary: bool = True
 ):
@@ -110,8 +110,8 @@ def transcribe_and_summarize(audio_path: str):
         transcript,
         tokenizer=summ_tokenizer,
         model=summ_model,
-        window_size=1024,      # BART’s positional limit
-        stride=256,            # 75% overlap
+        window_size=4096,      # BART’s positional limit
+        stride=1024,            # 75% overlap
         chunk_summary_max_length=1000,
         final_summary=True     # set False to get all chunk summaries
     )
